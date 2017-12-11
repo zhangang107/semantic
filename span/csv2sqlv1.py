@@ -2,7 +2,7 @@
 # @Date:   2017-10-11T11:02:48+08:00
 # @Email:  zhanganguc@gmail.com
 # @Last modified by:   zhangang
-# @Last modified time: 2017-12-05T15:03:12+08:00
+# @Last modified time: 2017-12-11T14:20:28+08:00
 # @Copyright: Copyright by USTC
 
 #!/usr/bin/python
@@ -10,9 +10,10 @@
 import csv
 import sqlite3
 from mydecorator import timefn
+import conf
 
 # input_filename = 'test2sqlv2.csv'
-# output_filename = 'datev0.db'
+output_filename = conf.db_name
 
 @timefn
 def creattb(output_filename, table_name):
@@ -45,7 +46,7 @@ def insert_many_to_table(output_filename, table_name, data):
     cur.close()
 
 @timefn
-def nodes_put2sql(input_filename, table_name, output_filename = 'datev0.db'):
+def nodes_put2sql(input_filename, table_name, output_filename = output_filename):
     f = open(input_filename)
     creattb(output_filename, table_name)
     reader = csv.reader(f)

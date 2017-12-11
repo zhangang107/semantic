@@ -5,14 +5,15 @@
 # @Email:  zhanganguc@gmail.com
 # @Filename: asm_txt2sqlv0.py
 # @Last modified by:   zhangang
-# @Last modified time: 2017-12-05T15:01:10+08:00
+# @Last modified time: 2017-12-11T14:19:43+08:00
 # @Copyright: Copyright by USTC
 
 import sqlite3
 from mydecorator import timefn
+import conf
 
 # input_filename = 'func_asm.txt'
-# output_filename = 'datev0.db'
+output_filename = conf.db_name
 @timefn
 def creattb(output_filename, table_name):
     try:
@@ -44,7 +45,7 @@ def insert_many_to_table(output_filename, table_name, data):
     cur.close()
 
 @timefn
-def asm_put2sql(input_filename, table_name, output_filename = 'datev0.db'):
+def asm_put2sql(input_filename, table_name, output_filename = output_filename):
     f = open(input_filename)
     #f.readline()
     creattb(output_filename, table_name)
