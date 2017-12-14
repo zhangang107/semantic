@@ -4,7 +4,7 @@
 # @Email:  zhanganguc@gmail.com
 # @Filename: semantic.py
 # @Last modified by:   zhangang
-# @Last modified time: 2017-12-08T15:54:41+08:00
+# @Last modified time: 2017-12-11T16:34:23+08:00
 # @Copyright: Copyright by USTC
 
 import re
@@ -25,15 +25,19 @@ def get_pre_state(asms):
     return (reg, flag, mem)
 
 def get_post_state(asms, post_state):
+    count = 1
     for asm in asms:
-        asm = armcal.normal_imm(asm)
+        print '     [*]before normal_imm:', asm
+        # asm = armcal.normal_imm(asm)
+        print '     [*]after normal_imm:', asm
         opt = asm.split()[0].lower().rstrip('s')
         if opt in armcal.execute_dic:
-            # print '[+]%s in dict' %opt
+            print '[+:%d]%s in dict' %(count, opt)
             armcal.execute_dic[opt](asm, post_state)
         else:
-            # print '[-]%s not in dict' %opt
+            print '[-:%d]%s not in dict' %(count, opt)
             pass
+        count += 1
 
 def get_state(asms):
     _asms = map(lambda s:' '.join(s.split()), asms)
@@ -52,26 +56,33 @@ def get_diff_semantic(semantic_o, semantic_p, threshold):
     # print semantic_o
     semantic_p = map(armcal.delete_comment, semantic_p)
     pre_state_o, post_state_o = get_state(semantic_o)
-    pre_state_p, post_state_p = get_state(semantic_p)
-    difference = 0
-    count = 0
-    for reg in post_state_p[0]:
-        count += 1
-        if reg not in post_state_o[0] or post_state_p[0][reg] != post_state_o[0][reg]:
-            difference += 1
-    for flag in post_state_p[1]:
-        count += 1
-        if flag not in post_state_o[1] or post_state_p[1][flag] != post_state_o[1][flag]:
-            difference += 1
-    for mem in post_state_p[2]:
-        count += 1
-        if mem not in post_state_o[2]:
-            difference += 1
-    diffrota = difference / count
-    if diffrota > 0 and diffrota < threshold:
-        return True
-    else:
-        return False
+    # pre_state_p, post_state_p = get_state(semantic_p)
+    # difference = 0
+    # count = 0
+    # print "post_state_p:{}".format(post_state_p)
+    # print '\n'
+    # print "post_state_o:{}".format(post_state_o)
+    # for reg in post_state_p[0]:
+    #     count += 1
+    #     if reg not in post_state_o[0] or post_state_p[0][reg] != post_state_o[0][reg]:
+    #         difference += 1
+    # for flag in post_state_p[1]:
+    #     count += 1
+    #     if flag not in post_state_o[1] or post_state_p[1][flag] != post_state_o[1][flag]:
+    #         difference += 1
+    # for mem in post_state_p[2]:
+    #     count += 1
+    #     if mem not in post_state_o[2]:
+    #         difference += 1
+    # diffrota = difference / float(count)
+    # print '[+]difference: {}'.format(difference)
+    # print '[+]count: {}'.format(count)
+    # print "[+]diffrota: {}".format(diffrota)
+    # if diffrota > 0 and diffrota < threshold:
+    #     return True
+    # else:
+    #     return False
+    return False
 
 if __name__ == '__main__':
     _asms = map(lambda s:' '.join(s.split()), asms)

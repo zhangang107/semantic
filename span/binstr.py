@@ -4,7 +4,7 @@
 # @Email:  zhanganguc@gmail.com
 # @Filename: binstr.py
 # @Last modified by:   zhangang
-# @Last modified time: 2017-11-24T16:53:15+08:00
+# @Last modified time: 2017-12-11T16:11:30+08:00
 # @Copyright: Copyright by USTC
 
 from collections import deque
@@ -69,4 +69,4 @@ class BinStr(object):
         return int(self.str, 2) == num
 
     def __getslice__(self, index1, index2):
-        return self.str[self.size-index1-1:self.size-index2-1]
+        return self.str[self.size-index1-1:self.size-index2 + 1]

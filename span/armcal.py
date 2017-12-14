@@ -4,7 +4,7 @@
 # @Email:  zhanganguc@gmail.com
 # @Filename: semantic.py
 # @Last modified by:   zhangang
-# @Last modified time: 2017-12-08T16:13:42+08:00
+# @Last modified time: 2017-12-11T16:36:46+08:00
 # @Copyright: Copyright by USTC
 
 import re
@@ -52,6 +52,7 @@ def normal_imm(asm):
         result = ''
         # print 'start>>>'
         tmp = m.group(1)
+        # print tmp
         res = ''
         if '+' in tmp:
             # print '+'
@@ -119,13 +120,15 @@ def asr(num, shift, size=32):
 
 def _shift_imm(shift_operand, post_state):
     global shifter_carry_out
-    print shift_operand
+    print "_shift_imm:",shift_operand
     imm = shift_operand[1:]
-    print imm
+    # print imm
     imm_bin = BinStr(int(imm, 16))
     immed_8 = int(imm_bin[7:0], 2)
+    print immed_8
     rotate_imm = int(imm_bin[11:8], 2)
     shifter_operand = int(cycle_shift(immed_8, rotate_imm*2), 2)
+    print 'shifter_operand:', shifter_operand
     if rotate_imm == 0:
         shifter_carry_out = post_state[1]['C']
     else:
@@ -445,7 +448,9 @@ def arithmetic_operation(asm, opt, post_state):
     else:
         Rn = post_state[0][Rn]
     shift_operand = _asm[3:]
+    print "     before shift:",shift_operand
     shift_operand = shift(asm, shift_operand, post_state)
+    print "     after: shift",shift_operand
     # if check_reg(shift_operand):
     #     tmp = shift_operand
     #     if tmp not in post_state[0]:

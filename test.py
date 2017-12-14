@@ -5,11 +5,12 @@
 # @Email:  zhanganguc@gmail.com
 # @Filename: test.py
 # @Last modified by:   zhangang
-# @Last modified time: 2017-12-11T14:55:00+08:00
+# @Last modified time: 2017-12-12T15:25:36+08:00
 # @Copyright: Copyright by USTC
 
 from span.asm_txt2sqlv0 import asm_put2sql
 from span.csv2sqlv1 import nodes_put2sql
+from span.detail2sql import detatil_put2sql
 import sqlite3
 from span import conf
 from span.semantic import get_diff_semantic
@@ -20,6 +21,10 @@ def put2sql():
     nodes_put2sql('./data/node_f.csv', 'NodesF')
     nodes_put2sql('./data/node_g.csv', 'NodesG')
     print 'read 2 sql complied...'
+
+def dt2sql():
+    detatil_put2sql('./data/asm_detail_f.txt', 'FuncAsmF')
+    detatil_put2sql('./data/asm_detail_g.txt', 'FuncAsmG')
 
 def get_from_sql():
     conn = sqlite3.connect(conf.db_name)
@@ -38,5 +43,7 @@ def diff(asms_f, asms_g, threshold):
     else:
         print "[*]found non-security patches"
 
-asms_f, asms_g = get_from_sql()
-diff(asms_f, asms_g, 0.1)
+# asms_f, asms_g = get_from_sql()
+# diff(asms_f, asms_g, 0.1)
+
+dt2sql()
