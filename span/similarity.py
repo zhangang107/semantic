@@ -5,15 +5,16 @@
 # @Email:  zhanganguc@gmail.com
 # @Filename: similarity.py
 # @Last modified by:   zhangang
-# @Last modified time: 2017-12-13T17:13:00+08:00
+# @Last modified time: 2017-12-14T14:26:27+08:00
 # @Copyright: Copyright by USTC
 
 from math import sqrt
-
+from mydecorator import timefn
 
 '''
 余弦相似度
 '''
+# @timefn
 def sim_distance_cos(p1, p2):
     c = set(p1.keys())&set(p2.keys())
     if not c:
@@ -36,6 +37,7 @@ eg:
 输入 nodes_f nodes_g
 返回相似度高的两个节点 [(node_f, node_g)]
 '''
+@timefn
 def find_sim_node_pair(nodes_f, nodes_g, similarity):
     # 先只比较助记符
     # 选取相似度高的前几位
@@ -44,24 +46,25 @@ def find_sim_node_pair(nodes_f, nodes_g, similarity):
     # 考虑语句大小
     # 考虑节点相互关系
     # 考虑出入度
-    threshold_sim = 0.90
+    threshold_sim = 0.95
     threshold_sam = 0.99
     prefs = {}
     node_pair = []
     nodes_power_g = {}
     nodes_optype_g = {}
-    nodes_greed_g = {}
+    nodes_degree_g = {}
     for node in nodes_g:
         prefs[node] = nodes_g[node]['mnem']
         # print 'origin :\n', prefs[node]
         nodes_power_g[node] = {'power':nodes_g[node]['power']}
         # print 'power:',nodes_power_g[node]
         nodes_optype_g[node] = nodes_g[node]['optype']
-        nodes_greed_g[node] = nodes_g[node]['degree']
+        nodes_degree_g[node] = nodes_g[node]['degree']
         prefs[node].update(nodes_power_g[node])
         # print 'after update power:\n', prefs[node]
         prefs[node].update(nodes_optype_g[node])
-        prefs[node].update(nodes_greed_g[node])
+        # if int(nodes_degree_g[node]['out_degree']) != 0:
+        prefs[node].update(nodes_degree_g[node])
     for node in nodes_f:
         match_pair = []
         p1 = nodes_f[node]['mnem']
@@ -69,15 +72,17 @@ def find_sim_node_pair(nodes_f, nodes_g, similarity):
         p1.update(node_power_f)
         node_optype_f = nodes_f[node]['optype']
         p1.update(node_optype_f)
-        node_greed_f = nodes_f[node]['degree']
-        p1.update(node_greed_f)
+        node_degree_f = nodes_f[node]['degree']
+        # if int(node_degree_f['out_degree']) != 0:
+        p1.update(node_degree_f)
         match_list = topMatches(prefs, p1, 3, similarity)
         for match in match_list:
             sim, node_g = match
             if sim >= threshold_sim and check_call(nodes_f[node]['call'], nodes_g[node_g]['call']):
                 match_pair.append((node, node_g, sim))
             else:
-                print node, node_g, sim
+                # print node, node_g, sim
+                pass
         node_pair.append(match_pair)
     return node_pair
 

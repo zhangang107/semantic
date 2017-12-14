@@ -3,14 +3,19 @@
 # @Email:  zhanganguc@gmail.com
 # @Filename: block.py
 # @Last modified by:   zhangang
-# @Last modified time: 2017-12-13T19:19:25+08:00
+# @Last modified time: 2017-12-14T14:26:19+08:00
 # @Copyright: Copyright by USTC
 
 import sqlite3
 import conf
+import networkx as nx
+import matplotlib.pyplot as plt
+from mydecorator import timefn
+
 
 output_filename = conf.db_name
 
+# @timefn
 def cumulate_item(item_list):
     item_dic = {}
     for item in item_list:
@@ -20,6 +25,7 @@ def cumulate_item(item_list):
             item_dic[item] += 1
     return item_dic
 
+# @timefn
 def cal_degree(node, edges):
     in_degree = 0
     out_degree = 0
@@ -30,6 +36,7 @@ def cal_degree(node, edges):
             in_degree += 1
     return (in_degree, out_degree)
 
+# @timefn
 def handle_call(mnem_list, opnds_list):
     call_dic = {}
     for i in xrange(len(mnem_list)):
@@ -40,6 +47,7 @@ def handle_call(mnem_list, opnds_list):
                 call_dic['BL'].append(opnds_list[i])
     return call_dic
 
+@timefn
 def readnodesfromsql(func_address, node_table, asm_table):
     conn = sqlite3.connect(output_filename)
     cur = conn.cursor()
@@ -82,7 +90,30 @@ def readnodesfromsql(func_address, node_table, asm_table):
     cur.close()
     conn.close()
     print 'read %d nodes from sql' % len(nodes)
-    return nodes
+    return nodes, edges
+
+@timefn
+def CreateGraph(nodes,edges):
+    # print 'start CreateGraph: %s' %(time.time())
+    # Create graph from edges and saveto png
+    G = nx.DiGraph()
+    # add nodes
+    # for node_id in nodes:
+    #     G.add_node(node_id,funcname=nodes[node_id]['funcname'],asms=nodes[node_id]['asms'],\
+    #                 sizes=nodes[node_id]['sizes'],power=nodes[node_id]['power'])
+    G.add_nodes_from(nodes)
+    for node_id in nodes:
+        G.nodes[node_id].update(nodes[node_id])
+    G.add_edges_from(edges)
+    # print edges
+    # save to png
+    nx.draw(G, pos=nx.spring_layout(G), arrows=True, with_labels = True, node_size = 350, node_color='r')
+    plt.title('Orign graph')
+    plt.savefig('01.png')
+    plt.close()
+    # end plt
+    # print 'end CreateGraph: %s' %(time.time())
+    return G
 
 if __name__ == '__main__':
     nodes_f = readnodesfromsql(498972, 'nodesf', 'funcasmf')
